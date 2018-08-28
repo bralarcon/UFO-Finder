@@ -1,49 +1,120 @@
-// Load the Table:
+dataSet = data;
 
-const inputData = data; // 
+var $tbody = document.querySelector("#table-body");
+var $dateInput = document.querySelector("#date-input");
+var $cityInput = document.querySelector("#city-input");
+var $stateInput = document.querySelector("#state-input");
+var $countryInput = document.querySelector("#country-input");
+var $shapeInput = document.querySelector("#shape-input");
+var $submitButton = document.querySelector("#submit");
 
-// Build the table
-function renderTable(input_data) {
-        input_data.forEach(element => {
-            let newTr = d3.select('table').append('tr')
-                newTr.append('td').text(element.datetime)
-                newTr.append('td').text(element.city)
-                newTr.append('td').text(element.state)
-                newTr.append('td').text(element.country)
-                newTr.append('td').text(element.shape)
-                newTr.append('td').text(element.durationMinutes)
-                newTr.append('td').text(element.comments)              
-        })
-} // end renderTable
+// Filtered list
+var filteredSightings = dataSet;
 
-renderTable(inputData) // render it from the global data variable
+// Set starting index and results per page
+var startingIndex = 0;
+var resultsPerPage = 70;
 
 
-function filterTable(e) {
-    e.preventDefault();
-    console.log(e.target.value)
+renderTable(dataSet);  
+
+// Function to render table
+function renderTable() {
+
+    // Set the value of ending index
+    var endingIndex = startingIndex + resultsPerPage;
+
+    // Looping through data set
+    for (var i = 0; i < filteredSightings.length; i++) {
     
-    var filter = e.target.value;
-    console.log(filter, 'IS THE FILTER')
-    let rows = document.getElementById("ufo-table").rows
-    
-    for (var i = 0; i < rows.length; i++) {
-        var firstCol = rows[i].cells[0].textContent;
-        var secondCol = rows[i].cells[1].textContent;
-        var thirdCol = rows[i].cells[2].textContent;
-        var fourthCol = rows[i].cells[3].textContent;
-        var fifthCol = rows[i].cells[4].textContent;
-        var sixthCol = rows[i].cells[5].textContent;
-        var seventhCol = rows[i].cells[6].textContent;
-		// Extend it here
-        if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1) {
-            rows[i].style.display = "";
-        } else {
-            rows[i].style.display = "none";
-        }      
-    }
-}
-// Assumes the text input has an id called filterValue
-// document.getElementById('filterValue').addEventListener('keyup', filterTable, false); 
+        // Insert a row
+        var $row = $tbody.insertRow(i);
+
+        // Get current object & keys
+        var currentSighting = filteredSightings[i];
+        var fields = Object.keys(currentSighting);
+
+        // Insert filteredSightings
+        for(var j = 0; j < fields.length; j++) {
+            var field = fields[j];
+            var $cell = $row.insertCell(j);
+            $cell.innerText = currentSighting[field];
+        };
+    };
+};
+
 // Event listener for submit button
 $submitButton.addEventListener("click", filterInput);
+
+// Function to filter date
+function filterDate(sighting) {
+    return sighting.datetime == $dateInput.value.trim().toLowerCase();
+};
+
+// Function to filter city
+function filterCity(sighting) {
+    return sighting.city == $cityInput.value.trim().toLowerCase();
+};
+
+// Function to filter state
+function filterState(sighting) {
+    return sighting.state == $stateInput.value.trim().toLowerCase();
+};
+
+// Function to filter country
+function filterCountry(sighting) {
+    return sighting.country == $countryInput.value.trim().toLowerCase();
+};
+
+// Function to filter shape
+function filterShape(sighting) {
+    return sighting.shape == $shapeInput.value.trim().toLowerCase();
+};
+
+// Function to filter input
+function filterInput(event) {
+
+    // Prevent default
+    event.preventDefault();
+
+    // Reseting data set each time button is clicked
+    filteredSightings = dataSet;
+
+    // Filters
+    if ($dateInput.value) {
+        filteredSightings = filteredSightings.filter(filterDate);
+    };
+
+    if ($cityInput.value) {
+        filteredSightings = filteredSightings.filter(filterCity);
+    };
+
+    if ($stateInput.value) {
+        filteredSightings = filteredSightings.filter(filterState);
+    };
+
+    if ($countryInput.value) {
+        filteredSightings = filteredSightings.filter(filterCountry);
+    };
+
+    if ($shapeInput.value) {
+        filteredSightings = filteredSightings.filter(filterShape);
+    };
+
+    if (!$dateInput && !$cityInput && !$stateInput && !$countryInput && !$shapeInput) {
+        filteredSightings = dataSet;
+    };
+
+    // Reset inputs
+    $dateInput.value = "";
+    $cityInput.value = "";
+    $stateInput.value = "";
+    $countryInput.value = "";
+    $shapeInput.value = "";
+
+    // Re-render table
+    $tbody.innerHTML = "";
+    renderTable();
+};
+
+
