@@ -11,7 +11,7 @@ var $submitButton = document.querySelector("#submit");
 // Filtered list
 var filteredSightings = dataSet;
 
-// Set starting index and results per page
+
 var startingIndex = 0;
 var resultsPerPage = 70;
 
@@ -21,20 +21,18 @@ renderTable(dataSet);
 // Function to render table
 function renderTable() {
 
-    // Set the value of ending index
+    
     var endingIndex = startingIndex + resultsPerPage;
 
-    // Looping through data set
+    // Looping data
     for (var i = 0; i < filteredSightings.length; i++) {
     
-        // Insert a row
+        
         var $row = $tbody.insertRow(i);
-
-        // Get current object & keys
         var currentSighting = filteredSightings[i];
         var fields = Object.keys(currentSighting);
 
-        // Insert filteredSightings
+        // Insert filter
         for(var j = 0; j < fields.length; j++) {
             var field = fields[j];
             var $cell = $row.insertCell(j);
@@ -46,38 +44,31 @@ function renderTable() {
 // Event listener for submit button
 $submitButton.addEventListener("click", filterInput);
 
-// Function to filter date
+// Function to filter
 function filterDate(sighting) {
     return sighting.datetime == $dateInput.value.trim().toLowerCase();
 };
 
-// Function to filter city
 function filterCity(sighting) {
     return sighting.city == $cityInput.value.trim().toLowerCase();
 };
 
-// Function to filter state
 function filterState(sighting) {
     return sighting.state == $stateInput.value.trim().toLowerCase();
 };
 
-// Function to filter country
 function filterCountry(sighting) {
     return sighting.country == $countryInput.value.trim().toLowerCase();
 };
 
-// Function to filter shape
 function filterShape(sighting) {
     return sighting.shape == $shapeInput.value.trim().toLowerCase();
 };
 
-// Function to filter input
 function filterInput(event) {
 
-    // Prevent default
     event.preventDefault();
 
-    // Reseting data set each time button is clicked
     filteredSightings = dataSet;
 
     // Filters
